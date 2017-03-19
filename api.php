@@ -40,8 +40,12 @@ function gwasw_get_recent($num_posts = 10) {
 function gwasw_get_since($idpost, $num_posts = 10) {
     global $wpdb;
 
+    if (!$last_post = get_post($idpost)) {
+        throw new \InvalidArgumentException('post does not exist');
+    }
+
     // We have to perform a custom query to get the posts IDs.
-    $sql = $wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE post_type = 'post' AND post_status = 'publish' AND ID > %d LIMIT 0,%d", $idpost, $num_posts);
+    $sql = $wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE post_type = 'post' AND post_status = 'publish' AND post_date_gmt > '%s' LIMIT 0,%d", $last_post->post_date_gmt, $num_posts);
     $idposts = $wpdb->get_col($sql);
 
     // Use get_posts to get the actual posts for the IDs.
@@ -78,7 +82,7 @@ function gwasw_get_single($idpost) {
     $results = get_posts($args) ?: [];
 
     if (!count($results)) {
-        return NULL;
+        throw new \InvalidArgumentException('post does not exist');
     }
 
     // Get post data for each post.
@@ -101,7 +105,7 @@ function gwasw_get_post_data(array $post) {
     $postdata->published_gmt = $post['post_date_gmt'];
     $postdata->url = get_permalink($idpost);
     // TODO Setting for thumbnail image size?
-    $postdata->imageurl = get_the_post_thumbnail_url($idpost, 'medium');
+    $postdata->imageurl = gwasw_get_post_thumbnail($post);
 
     // Get tags.
     $tags = [];
@@ -132,6 +136,24 @@ function gwasw_get_post_excerpt(array $post) {
     return $content;
 }
 
+function gwasw_get_post_thumbnail(array $post, $size = 'medium') {
+    if (!$src = get_the_post_thumbnail_url($post['ID'], $size)) {
+        return null;
+    }
+
+    // If URL is relative, we need to make it absolute.
+    $home_url = get_home_url();
+    $pattern = '/^(https?:\/\/[^\/]+)/';
+    preg_match($pattern, $home_url, $match);
+    $domain = $match[1];
+
+    if (strpos($src, $domain) !== 0) {
+        $src = $domain . $src;
+    }
+
+    return $src;
+}
+
 function gwasw_get_query_var($key) {
     global $wp;
     if (!array_key_exists($key, $wp->query_vars)) {
@@ -156,15 +178,20 @@ function gwasw_extract_post_array(array $results) {
 
 $data = new \stdClass;
 
-if ($idpost = gwasw_get_query_var('idpost')) {
-    // Get single post
-    $data->post = gwasw_get_single((int) $idpost);
-} elseif ($idsince = gwasw_get_query_var('idsince')) {
-    // Get posts since
-    $data->posts = gwasw_get_since($idsince);
-} else {
-    // Get latest posts
-    $data->posts = gwasw_get_recent();
+try {
+    if ($idpost = gwasw_get_query_var('idpost')) {
+        // Get single post
+        $data->post = gwasw_get_single((int) $idpost);
+    } elseif ($idsince = gwasw_get_query_var('idsince')) {
+        // Get posts since
+        $data->posts = gwasw_get_since($idsince);
+    } else {
+        // Get latest posts
+        $data->posts = gwasw_get_recent();
+    }
+} catch (\InvalidArgumentException $exception) {
+    $data = new \stdClass;
+    $data->error = $exception->getMessage();
 }
 
 // Output content
