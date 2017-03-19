@@ -45,7 +45,7 @@ See above.
 
 ```json
 {
-	error: "post does not exist"
+	"error": "post does not exist"
 }
 ```
 
@@ -78,6 +78,6 @@ http://example.com/?gwasw_api=1&idsince=[integer]
 
 ```json
 {
-	error: "post does not exist"
+	"error": "post does not exist"
 }
 ```
