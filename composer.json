@@ -1,0 +1,12 @@
+{
+    "name": "gwa/wp-posts-api",
+    "description": "wp-plugin-use-your-drive",
+    "license": "MIT",
+    "type": "wordpress-plugin",
+    "require" : {
+        "composer/installers": "~1.2.0"
+    },
+    "extra": {
+        "installer-name": "wp-posts-api"
+    }
+}
