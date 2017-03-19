@@ -1,8 +1,8 @@
 <?php
 /*
-Plugin Name: GWA Social Wall
+Plugin Name: WP Post API
 Plugin URI:  http://www.greatwhiteark.com
-Description: GWA Social Wall enhancements
+Description: Simple JSON export of post excerpts.
 Version:     1.0.0
 Author:      GWA
 Author URI:  http://www.greatwhiteark.com
