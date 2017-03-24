@@ -34,7 +34,7 @@ http://example.com/?gwasw_api=1
 Returns the 10 posts newer than the post with the ID passed, oldest first.
 
 ```markup
-http://example.com/?gwasw_api=1&idpost=[integer]
+http://example.com/?gwasw_api=1&idsince=[integer]
 ```
 
 ### Response:
@@ -54,7 +54,7 @@ See above.
 Returns a single post:
 
 ```markup
-http://example.com/?gwasw_api=1&idsince=[integer]
+http://example.com/?gwasw_api=1&idpost=[integer]
 ```
 
 ### Response:
