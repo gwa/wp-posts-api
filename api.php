@@ -97,6 +97,10 @@ function gwasw_get_single($idpost) {
 function gwasw_get_post_data(array $post) {
     $idpost = $post['ID'];
 
+    $options = get_option('gwasw_options');
+    $author_override = isset($options['author']) ? $options['author'] : null;
+    $author_image_url = isset($options['author_image']) ? $options['author_image'] : null;
+
     $postdata = new \stdClass;
     $postdata->id = $idpost;
     $postdata->guid = get_the_guid($idpost);
@@ -104,6 +108,10 @@ function gwasw_get_post_data(array $post) {
     $postdata->excerpt = gwasw_get_post_excerpt($post);
     $postdata->published_gmt = $post['post_date_gmt'];
     $postdata->url = get_permalink($idpost);
+    $postdata->author = $author_override ?: get_the_author_meta('display_name', $post['post_author']);
+    $postdata->authorurl = get_home_url();
+    $postdata->authorimageurl = $author_image_url;
+
     // TODO Setting for thumbnail image size?
     $postdata->imageurl = gwasw_get_post_thumbnail($post);
 
