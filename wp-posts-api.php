@@ -1,9 +1,9 @@
 <?php
 /*
-Plugin Name: WP Post API
-Plugin URI:  http://www.greatwhiteark.com
+Plugin Name: WP Posts API
+Plugin URI:  https://github.com/gwa/wp-posts-api
 Description: Simple JSON export of post excerpts.
-Version:     1.0.0
+Version:     1.1.1
 Author:      GWA
 Author URI:  http://www.greatwhiteark.com
 License:     MIT
