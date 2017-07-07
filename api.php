@@ -145,7 +145,17 @@ function gwasw_get_post_excerpt(array $post) {
 }
 
 function gwasw_get_post_thumbnail(array $post, $size = 'medium') {
-    if (!$src = get_the_post_thumbnail_url($post['ID'], $size)) {
+    if (function_exists('gwasw_get_post_thumbnail_callback')) {
+        // Call custom callback.
+        // WP Theme using the plugin can define this function to return a
+        // custom thumbnail src.
+        // gwasw_get_post_thumbnail_callback(integer $idpost, string $size) string|NULL
+        $src = gwasw_get_post_thumbnail_callback($post['ID'], $size);
+    } else {
+        $src = get_the_post_thumbnail_url($post['ID'], $size);
+    }
+
+    if (!$src) {
         return null;
     }
 
